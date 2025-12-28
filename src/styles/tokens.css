@@ -1,0 +1,76 @@
+/* SeaPub design tokens — the single source of truth for color, shape, depth. */
+
+:root {
+  /* color */
+  --sp-bg: #f7f5f0;
+  --sp-surface: #ffffff;
+  --sp-surface-2: #f1eee6;
+  --sp-reading: #fbf9f4;
+  --sp-text: #26303b;
+  --sp-text-2: #5c6672;
+  --sp-accent: #0e7490;
+  --sp-accent-hover: #0f8ba8;
+  --sp-accent-soft: rgba(14, 116, 144, 0.1);
+  --sp-on-accent: #ffffff;
+  --sp-border: rgba(38, 48, 59, 0.08);
+  --sp-border-strong: rgba(38, 48, 59, 0.16);
+  --sp-danger: #b4483e;
+  --sp-danger-soft: rgba(180, 72, 62, 0.1);
+  --sp-success: #2e7d5b;
+  --sp-success-soft: rgba(46, 125, 91, 0.1);
+
+  /* shape */
+  --sp-radius-sm: 8px;
+  --sp-radius-md: 12px;
+  --sp-radius-lg: 16px;
+  --sp-radius-xl: 24px;
+
+  /* depth */
+  --sp-shadow-soft: 0 1px 2px rgba(15, 23, 42, 0.05), 0 8px 24px rgba(15, 23, 42, 0.07);
+  --sp-shadow-elevated: 0 12px 40px rgba(15, 23, 42, 0.14);
+
+  /* type */
+  --sp-font-ui: 'Inter Variable', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --sp-font-reading: 'Literata Variable', Georgia, 'Times New Roman', serif;
+
+  color-scheme: light;
+}
+
+[data-theme='dark'] {
+  --sp-bg: #0b1220;
+  --sp-surface: #131c2e;
+  --sp-surface-2: #1a2438;
+  --sp-reading: #101827;
+  --sp-text: #e8e4d9;
+  --sp-text-2: #a3acb8;
+  --sp-accent: #38bdf8;
+  --sp-accent-hover: #7dd3fc;
+  --sp-accent-soft: rgba(56, 189, 248, 0.12);
+  --sp-on-accent: #0b1220;
+  --sp-border: rgba(255, 255, 255, 0.08);
+  --sp-border-strong: rgba(255, 255, 255, 0.18);
+  --sp-danger: #e2695c;
+  --sp-danger-soft: rgba(226, 105, 92, 0.14);
+  --sp-success: #5bbf94;
+  --sp-success-soft: rgba(91, 191, 148, 0.12);
+  --sp-shadow-soft: 0 1px 2px rgba(0, 0, 0, 0.3), 0 8px 24px rgba(0, 0, 0, 0.35);
+  --sp-shadow-elevated: 0 12px 40px rgba(0, 0, 0, 0.5);
+  color-scheme: dark;
+}
+
+/* Optional high-contrast mode: firmer text, borders, and accents. */
+[data-contrast='high'] {
+  --sp-text: #0a0f16;
+  --sp-text-2: #3c4754;
+  --sp-border: rgba(38, 48, 59, 0.35);
+  --sp-border-strong: rgba(38, 48, 59, 0.55);
+  --sp-accent: #0b5c73;
+}
+
+[data-theme='dark'][data-contrast='high'] {
+  --sp-text: #ffffff;
+  --sp-text-2: #ccd4de;
+  --sp-border: rgba(255, 255, 255, 0.3);
+  --sp-border-strong: rgba(255, 255, 255, 0.5);
+  --sp-accent: #7dd3fc;
+}
