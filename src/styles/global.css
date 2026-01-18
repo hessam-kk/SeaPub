@@ -1,0 +1,213 @@
+@import 'tailwindcss';
+@import './tokens.css';
+
+/* Map CSS-variable tokens into Tailwind utilities (bg-app, text-ink, …). */
+@theme inline {
+  --color-app: var(--sp-bg);
+  --color-surface: var(--sp-surface);
+  --color-surface-2: var(--sp-surface-2);
+  --color-reading: var(--sp-reading);
+  --color-ink: var(--sp-text);
+  --color-ink-2: var(--sp-text-2);
+  --color-accent: var(--sp-accent);
+  --color-accent-hover: var(--sp-accent-hover);
+  --color-accent-soft: var(--sp-accent-soft);
+  --color-on-accent: var(--sp-on-accent);
+  --color-edge: var(--sp-border);
+  --color-edge-strong: var(--sp-border-strong);
+  --color-danger: var(--sp-danger);
+  --color-danger-soft: var(--sp-danger-soft);
+  --color-success: var(--sp-success);
+  --color-success-soft: var(--sp-success-soft);
+
+  --font-ui: var(--sp-font-ui);
+  --font-reading: var(--sp-font-reading);
+
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 16px;
+  --radius-xl: 24px;
+
+  --shadow-soft: var(--sp-shadow-soft);
+  --shadow-elevated: var(--sp-shadow-elevated);
+}
+
+@layer base {
+  html,
+  body,
+  #root {
+    height: 100%;
+  }
+
+  body {
+    background: var(--sp-bg);
+    color: var(--sp-text);
+    font-family: var(--sp-font-ui);
+    font-size: 14px;
+    line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+    overflow: hidden;
+  }
+
+  * {
+    border-color: var(--sp-border);
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--sp-accent);
+    outline-offset: 2px;
+    border-radius: 4px;
+  }
+
+  ::selection {
+    background: var(--sp-accent-soft);
+  }
+
+  button {
+    cursor: pointer;
+  }
+
+  button:disabled {
+    cursor: default;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+      scroll-behavior: auto !important;
+    }
+  }
+}
+
+@layer components {
+  .sp-input {
+    width: 100%;
+    background: var(--sp-surface);
+    border: 1px solid var(--sp-border);
+    border-radius: 10px;
+    padding: 7px 12px;
+    font-size: 13.5px;
+    color: var(--sp-text);
+    transition: border-color 150ms ease, box-shadow 150ms ease;
+  }
+  .sp-input::placeholder {
+    color: var(--sp-text-2);
+  }
+  .sp-input:hover {
+    border-color: var(--sp-border-strong);
+  }
+  .sp-input:focus {
+    outline: none;
+    border-color: var(--sp-accent);
+    box-shadow: 0 0 0 3px var(--sp-accent-soft);
+  }
+
+  /* Range slider — calm, minimal, thumb-friendly. */
+  .sp-range {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 100%;
+    height: 20px;
+    background: transparent;
+  }
+  .sp-range::-webkit-slider-runnable-track {
+    height: 4px;
+    border-radius: 999px;
+    background: var(--sp-border-strong);
+  }
+  .sp-range::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    margin-top: -6px;
+    width: 16px;
+    height: 16px;
+    border-radius: 999px;
+    background: var(--sp-surface);
+    border: 2px solid var(--sp-accent);
+    box-shadow: 0 1px 3px rgba(15, 23, 42, 0.2);
+    transition: transform 120ms ease;
+  }
+  .sp-range::-webkit-slider-thumb:hover {
+    transform: scale(1.12);
+  }
+  .sp-range::-moz-range-track {
+    height: 4px;
+    border-radius: 999px;
+    background: var(--sp-border-strong);
+  }
+  .sp-range::-moz-range-thumb {
+    width: 12px;
+    height: 12px;
+    border-radius: 999px;
+    background: var(--sp-surface);
+    border: 2px solid var(--sp-accent);
+  }
+  .sp-range:disabled {
+    opacity: 0.5;
+  }
+
+  /* Filled track: the passed portion is colored like the thumb's accent
+     ring. The input sets --sp-range-fill: <percentage> inline. */
+  .sp-range {
+    --sp-range-fill: 0%;
+  }
+  .sp-range::-webkit-slider-runnable-track {
+    background: linear-gradient(
+      to right,
+      var(--sp-accent) 0%,
+      var(--sp-accent) var(--sp-range-fill),
+      var(--sp-border-strong) var(--sp-range-fill),
+      var(--sp-border-strong) 100%
+    );
+  }
+  .sp-range::-moz-range-track {
+    background: linear-gradient(
+      to right,
+      var(--sp-accent) 0%,
+      var(--sp-accent) var(--sp-range-fill),
+      var(--sp-border-strong) var(--sp-range-fill),
+      var(--sp-border-strong) 100%
+    );
+  }
+  /* Firefox also has a native progress fill — keep it aligned. */
+  .sp-range::-moz-range-progress {
+    height: 4px;
+    border-radius: 999px;
+    background: var(--sp-accent);
+  }
+
+  /* Reader canvas: epub.js internals. Vertical scrolling in scroll mode
+     happens inside .epub-container — hide its scrollbars (progress is shown
+     in the bottom bar) and forbid horizontal drift. */
+  .sp-reader-canvas .epub-container {
+    overflow-x: hidden !important;
+    scrollbar-width: none;
+  }
+  .sp-reader-canvas .epub-container::-webkit-scrollbar {
+    display: none;
+  }
+
+  /* Subtle scrollbars that stay out of the way. */
+  .sp-scroll {
+    scrollbar-width: thin;
+    scrollbar-color: var(--sp-border-strong) transparent;
+  }
+  .sp-scroll::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+  }
+  .sp-scroll::-webkit-scrollbar-thumb {
+    background: var(--sp-border-strong);
+    border-radius: 999px;
+    border: 3px solid transparent;
+    background-clip: content-box;
+  }
+  .sp-scroll::-webkit-scrollbar-track {
+    background: transparent;
+  }
+}
