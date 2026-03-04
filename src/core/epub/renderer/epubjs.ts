@@ -54,6 +54,8 @@ export class EpubJsRenderer implements EpubRenderer {
   private readyCb: (() => void) | null = null
 
   private tocFlat: { label: string; href: string }[] | null = null
+  /** Section docs already wired with the key forwarder below. */
+  private keysWired = new WeakSet<Document>()
   private currentIndex = 0
   private currentHref = ''
   private lastSpineCount = 1
@@ -88,6 +90,7 @@ export class EpubJsRenderer implements EpubRenderer {
       const doc = (view as { document?: Document }).document
       if (doc) {
         this.docs.add(doc)
+        this.wireKeys(doc)
         if (this.css) this.paint(doc)
       }
     })
@@ -381,6 +384,36 @@ export class EpubJsRenderer implements EpubRenderer {
   }
 
   // ---- internals ----
+
+  /**
+   * Keydown inside a section iframe never reliably reaches the parent
+   * window listener (focus lives in the child document), so forward it:
+   * suppress the original to avoid double-handling, re-dispatch an
+   * equivalent event on the parent window where the shortcut handler
+   * lives, and mirror preventDefault back so the iframe doesn't also
+   * natively scroll (which would double-move in scrolled flow).
+   */
+  private wireKeys(doc: Document): void {
+    if (this.keysWired.has(doc)) return
+    this.keysWired.add(doc)
+    doc.addEventListener('keydown', (e: Event) => {
+      const ke = e as KeyboardEvent
+      e.stopPropagation()
+      const copy = new KeyboardEvent('keydown', {
+        key: ke.key,
+        code: ke.code,
+        ctrlKey: ke.ctrlKey,
+        metaKey: ke.metaKey,
+        altKey: ke.altKey,
+        shiftKey: ke.shiftKey,
+        repeat: ke.repeat,
+        bubbles: false,
+        cancelable: true,
+      })
+      window.dispatchEvent(copy)
+      if (copy.defaultPrevented) e.preventDefault()
+    })
+  }
 
   private paint(doc: Document): void {
     const head = doc.head ?? doc.documentElement
