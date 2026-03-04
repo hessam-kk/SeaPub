@@ -54,8 +54,8 @@ export class EpubJsRenderer implements EpubRenderer {
   private readyCb: (() => void) | null = null
 
   private tocFlat: { label: string; href: string }[] | null = null
-  /** Section docs already wired with the key forwarder below. */
-  private keysWired = new WeakSet<Document>()
+  /** Section docs already wired with the event forwarders below. */
+  private childWired = new WeakSet<Document>()
   private currentIndex = 0
   private currentHref = ''
   private lastSpineCount = 1
@@ -90,7 +90,7 @@ export class EpubJsRenderer implements EpubRenderer {
       const doc = (view as { document?: Document }).document
       if (doc) {
         this.docs.add(doc)
-        this.wireKeys(doc)
+        this.wireChildEvents(doc)
         if (this.css) this.paint(doc)
       }
     })
@@ -393,9 +393,9 @@ export class EpubJsRenderer implements EpubRenderer {
    * lives, and mirror preventDefault back so the iframe doesn't also
    * natively scroll (which would double-move in scrolled flow).
    */
-  private wireKeys(doc: Document): void {
-    if (this.keysWired.has(doc)) return
-    this.keysWired.add(doc)
+  private wireChildEvents(doc: Document): void {
+    if (this.childWired.has(doc)) return
+    this.childWired.add(doc)
     doc.addEventListener('keydown', (e: Event) => {
       const ke = e as KeyboardEvent
       e.stopPropagation()
@@ -412,6 +412,27 @@ export class EpubJsRenderer implements EpubRenderer {
       })
       window.dispatchEvent(copy)
       if (copy.defaultPrevented) e.preventDefault()
+    })
+    // Pointer interaction with book content (e.g. click-away to dismiss the
+    // selection popover): child-document pointerdown doesn't reliably reach
+    // parent listeners, so suppress the original and re-dispatch an
+    // equivalent event on the parent document exactly once.
+    doc.addEventListener('pointerdown', (e: Event) => {
+      const pe = e as PointerEvent
+      e.stopPropagation()
+      const copy = new PointerEvent('pointerdown', {
+        bubbles: true,
+        cancelable: true,
+        clientX: pe.clientX,
+        clientY: pe.clientY,
+        button: pe.button,
+        buttons: pe.buttons,
+        ctrlKey: pe.ctrlKey,
+        metaKey: pe.metaKey,
+        altKey: pe.altKey,
+        shiftKey: pe.shiftKey,
+      })
+      document.dispatchEvent(copy)
     })
   }
 
