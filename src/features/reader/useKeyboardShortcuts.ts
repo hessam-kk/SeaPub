@@ -39,12 +39,14 @@ export function useKeyboardShortcuts(
         case 'ArrowDown':
         case 'PageDown':
           e.preventDefault()
+          rs.setSelection(null)
           renderer?.next()
           break
         case 'ArrowLeft':
         case 'ArrowUp':
         case 'PageUp':
           e.preventDefault()
+          rs.setSelection(null)
           renderer?.prev()
           break
         case ' ':
@@ -54,6 +56,7 @@ export function useKeyboardShortcuts(
             return
           }
           e.preventDefault()
+          rs.setSelection(null)
           if (e.shiftKey) {
             renderer?.prev()
           } else {
