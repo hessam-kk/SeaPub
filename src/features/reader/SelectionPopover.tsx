@@ -25,6 +25,9 @@ export function SelectionPopover({
     setNoteText('')
   }, [selection?.cfi])
 
+  // Click-away dismiss. Clicks on parent chrome arrive here directly;
+  // clicks inside book content arrive via the renderer's pointerdown
+  // forwarder (child-iframe events don't reliably reach parent listeners).
   useEffect(() => {
     if (!selection) return
     const onDown = (e: PointerEvent) => {
