@@ -4,8 +4,11 @@ import { useReaderStore } from '@/state/readerStore'
 import { usePlatform } from '@/hooks/usePlatform'
 
 /**
- * Arrow keys / PgUp/PgDn turn pages; F fullscreen; Esc closes panels;
- * B bookmark; S settings; T contents; / search.
+ * Page navigation (paginated and scrolled modes alike — the rendition turns
+ * a page in paginated flow and scrolls a full viewport in scrolled flow):
+ * Right/Down/Space/PgDn forward, Left/Up/Shift+Space/PgUp back.
+ * F fullscreen; Esc closes panels; B bookmark; S settings; T contents;
+ * / search.
  */
 export function useKeyboardShortcuts(
   rendererRef: RefObject<EpubRenderer | null>,
@@ -33,14 +36,29 @@ export function useKeyboardShortcuts(
 
       switch (e.key) {
         case 'ArrowRight':
+        case 'ArrowDown':
         case 'PageDown':
           e.preventDefault()
           renderer?.next()
           break
         case 'ArrowLeft':
+        case 'ArrowUp':
         case 'PageUp':
           e.preventDefault()
           renderer?.prev()
+          break
+        case ' ':
+        case 'Spacebar':
+          // Let focused buttons/links keep their native Space activation.
+          if (target?.closest?.('button, a[href], [role="button"], [role="switch"]')) {
+            return
+          }
+          e.preventDefault()
+          if (e.shiftKey) {
+            renderer?.prev()
+          } else {
+            renderer?.next()
+          }
           break
         case 'f':
         case 'F': {
