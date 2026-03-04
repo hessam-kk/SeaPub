@@ -6,6 +6,10 @@ on:
       - 'v*'
   workflow_dispatch:
 
+# tauri-action creates/updates the GitHub Release — needs write access.
+permissions:
+  contents: write
+
 jobs:
   build-windows:
     runs-on: windows-latest
